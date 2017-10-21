@@ -1,25 +1,34 @@
 class Grid{
-    constructor(cellShape){
-        this.cellShape = cellShape;
-        this.cells = { 'cells': [], 'apple' : false}
+    constructor(cell){
+        this.cell = cell;
+        this.cells = [];
+        this.set();
     }
 
     draw(context){
-        var gridSize = this.setSize(screenSize);
-        this.set(gridSize, this.cellShape);
+        for(var i = 0; i < this.cells.length; i++){
+            for(var j = 0; j < this.cells[i].length; j++){
+                context.rect(this.cells[i][j].shape.x, this.cells[i][j].shape.y, this.cell.width, this.cell.height);
+            }
+        }    
     }
     
-    set(gridSize){
+    set(){
+        var gridSize = this.setSize(screenSize);   
         for(var i = 0; i < gridSize.x; i++){
+            var gridRow = [];            
             for(var j = 0; j < gridSize.y; j++){
-                
-                context.rect(i * this.cellShape.width, j * this.cellShape.height, this.cellShape.width, this.cellShape.height);
+                var x = i * this.cell.width;
+                var y = j * this.cell.height;
+                var aux = new Rect(x,y,this.cell.width,this.cell.height);                                
+                gridRow.push(new GridCell(aux));    
             }
+            this.cells.push(gridRow);
         }
     }
     
     setSize(screenSize){
-        return { 'x' : screenSize.width/this.cellShape.width, 
-                 'y' : screenSize.height/this.cellShape.height};
+        return { 'x' : screenSize.width/this.cell.width, 
+                 'y' : screenSize.height/this.cell.height};
     }
 }

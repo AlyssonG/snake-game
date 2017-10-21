@@ -13,10 +13,14 @@ window.onload = function(){
     var cell = new Rect(0,0,20,20);
     grid = new Grid(cell);
     drawables.push(grid);
+    draw(drawables,context);   
+    
     var snake = new Snake(1,1,cell);
     drawables.push(snake);
     draw(drawables,context);   
-               
+
+    createApple(grid);
+
     setInterval(function(){
         snake.move(dir);
         draw(drawables,context);          
@@ -54,5 +58,11 @@ function addInputListeners(){
 }
 
 function createApple(grid){
-    for9
+    var x = Math.floor(Math.random * grid.cells.length);
+    var y = Math.floor(Math.random * grid.cells[0].length);
+    console.log(x + " " + y);
+    var cell = grid.cells[x][y];
+    cell.apple = true;
+    context.fillStyle="#FF0000";    
+    context.fillRect(cell.x,cell.y,cell.width,cell.height);
 }
