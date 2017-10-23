@@ -2,36 +2,35 @@ var context = undefined;
 var screenSize = undefined;
 var grid = undefined;
 var drawables = [];
-var dir = {'x' : 1, 'y' : 1};
+var snake = undefined;
 
 window.onload = function(){
     addInputListeners();    
+
     var canvas = document.getElementById("canvas");
     context = canvas.getContext("2d");
     screenSize = { 'width': canvas.width, 
                    'height': canvas.height };
-    var cell = new Rect(0,0,20,20);
+
+    var cell = new Rect(0,0,50,50);
     grid = new Grid(cell);
-    drawables.push(grid);
-    draw(drawables,context);   
+    //drawables.push(grid);
     
-    var snake = new Snake(1,1,cell);
+    var dir = new Vector2(1,0);
+    snake = new Snake(cell,dir);
     drawables.push(snake);
     draw(drawables,context);   
-
-    createApple(grid);
+    
+    var apple = new Apple(cell.width,cell.height,grid);
+    drawables.push(apple);
 
     setInterval(function(){
-        snake.move(dir);
+        snake.update();
+        consumeApple(snake,apple);
         draw(drawables,context);          
-    }, 500); 
+    }, 100); 
 }
 
-
-function setDir(x,y){
-    dir.x = x;
-    dir.y = y;
-}
 
 function draw(drawables, context){
     context.clearRect(0, 0, canvas.width, canvas.height);            
@@ -40,29 +39,26 @@ function draw(drawables, context){
     context.stroke();
 }
 
+function consumeApple(snake, apple){
+    if(snake.isIn(apple.rect)){
+        snake.consumeApple();
+        apple.setPosition();
+    }
+}
+
 function addInputListeners(){
     window.addEventListener('keydown', function(event) {
         if(event.keyCode == 37) {
-            setDir(-1,0);            
+            snake.setDir(new Vector2(-1,0));            
         }
         else if(event.keyCode == 39) {
-            setDir(1,0);
+            snake.setDir(new Vector2(1,0));
         }
         else if(event.keyCode == 38) {
-            setDir(0,-1);
+            snake.setDir(new Vector2(0,-1));            
         }
         else if(event.keyCode == 40) {
-            setDir(0, 1);
+            snake.setDir(new Vector2(0,1));                        
         }
     });
-}
-
-function createApple(grid){
-    var x = Math.floor(Math.random * grid.cells.length);
-    var y = Math.floor(Math.random * grid.cells[0].length);
-    console.log(x + " " + y);
-    var cell = grid.cells[x][y];
-    cell.apple = true;
-    context.fillStyle="#FF0000";    
-    context.fillRect(cell.x,cell.y,cell.width,cell.height);
 }
